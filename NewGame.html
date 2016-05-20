@@ -1,0 +1,67 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Game</title>
+	</head>
+	<body>
+		<script>
+			var width = prompt("Количество ячеек по ширине:", '');
+			var hight = prompt("Количество ячеек по высоте:", '');
+			var startX = prompt("Первая точка по X:", '') - 1;
+			var startY = prompt("Первая точка по Y:", '') - 1;
+			var finishX = prompt("Вторая точка по X:", '') - 1;
+			var finishY = prompt("Вторая точка по Y:", '') - 1;
+			var newElem=document.createElement('table');
+			  newElem.width=400;
+			  newElem.border=1;
+			var field = [];
+			for(i = 0; i < hight; i++) {
+				field[i] = [];
+				var newRow=newElem.insertRow(i);
+				for(j = 0; j < width; j++) {
+					var randomValue = Math.random() >= 0.56;
+					field[i][j] = {steps : 0, bomb : randomValue, x : j, y : i}
+					var newCell = newRow.insertCell(j);
+					if(randomValue) {
+						newCell.innerHTML="<b>1</b>";
+					} else {
+						newCell.innerHTML="<b>0</b>";
+					}
+				}
+			}
+			newElem.rows[startY].cells[startX].innerHTML="<b>X</b>";
+			newElem.rows[finishY].cells[finishX].innerHTML="<b>Y</b>";
+			
+			field[-1] = []; //error
+			field.push([]);
+
+			var startPoint = field[startY][startX];
+			var finishPoint = field[finishY][finishX];
+			startPoint.bomb = false;
+			finishPoint.bomb = false;
+			var trackPoints = [];
+			trackPoints.push(startPoint);
+			while (trackPoints.length != 0) {
+				var track = trackPoints.shift();
+				var up = field[track.y - 1][track.x];
+				var down = field[track.y + 1][track.x];
+				var left = field[track.y][track.x - 1];
+				var right = field[track.y][track.x + 1];
+				var traverse = [up, down, left, right];
+				for(i = 0; i < 4; i++) {
+					if (traverse[i] != undefined && traverse[i].bomb != true) {
+						if(track.steps + 1 < traverse[i].steps || traverse[i].steps == 0) {
+							traverse[i].steps = track.steps + 1;
+							if(traverse[i] != finishPoint)
+								trackPoints.push(traverse[i]);
+						}
+					}
+				}
+			}
+			document.body.appendChild(newElem);
+			alert("Минимальное количество шагов: " + finishPoint.steps);
+			</script>
+	</body>
+</html>
